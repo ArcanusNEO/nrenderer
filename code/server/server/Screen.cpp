@@ -1,4 +1,4 @@
-#include "Server/Screen.hpp"
+#include "server/Screen.hpp"
 
 #include <cstdlib>
 

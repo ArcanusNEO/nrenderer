@@ -2,7 +2,7 @@
 #ifndef __NR_COMPONENT_MANAGER_HPP__
 #define __NR_COMPONENT_MANAGER_HPP__
 
-#include <Windows.h>
+#include <windows.h>
 #include <vector>
 #include <chrono>
 #include <thread>

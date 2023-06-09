@@ -1,5 +1,5 @@
 #include "utilities/FileFetcher.hpp"
-#include "Windows.h"
+#include "windows.h"
 #include "commdlg.h"
 
 namespace NRenderer

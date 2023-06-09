@@ -1,4 +1,4 @@
-#include "Server/Logger.hpp"
+#include "server/Logger.hpp"
 
 namespace NRenderer
 {
