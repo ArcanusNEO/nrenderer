@@ -33,9 +33,14 @@
 #include "gtest/gtest.h"
 
 class PropertyTwo : public testing::Test {
- protected:
-  void SetUp() override { RecordProperty("SetUpProp", 2); }
-  void TearDown() override { RecordProperty("TearDownProp", 2); }
+protected:
+  void SetUp() override {
+    RecordProperty("SetUpProp", 2);
+  }
+
+  void TearDown() override {
+    RecordProperty("TearDownProp", 2);
+  }
 };
 
 TEST_F(PropertyTwo, TestSomeProperties) {

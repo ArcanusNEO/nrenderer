@@ -2,7 +2,7 @@
 /// @file glm/glm.cpp
 
 #ifndef GLM_ENABLE_EXPERIMENTAL
-#define GLM_ENABLE_EXPERIMENTAL
+  #define GLM_ENABLE_EXPERIMENTAL
 #endif
 #include <glm/gtx/dual_quaternion.hpp>
 #include <glm/gtc/vec1.hpp>
@@ -11,8 +11,7 @@
 #include <glm/ext/scalar_uint_sized.hpp>
 #include <glm/glm.hpp>
 
-namespace glm
-{
+namespace glm {
 // tvec1 type explicit instantiation
 template struct vec<1, uint8, lowp>;
 template struct vec<1, uint16, lowp>;
@@ -259,5 +258,4 @@ template struct tdualquat<float64, mediump>;
 template struct tdualquat<float32, highp>;
 template struct tdualquat<float64, highp>;
 
-}//namespace glm
-
+}  //namespace glm

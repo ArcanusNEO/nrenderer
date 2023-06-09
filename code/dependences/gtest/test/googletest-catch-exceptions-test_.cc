@@ -32,18 +32,18 @@
 // exceptions, and the output is verified by
 // googletest-catch-exceptions-test.py.
 
-#include <stdio.h>  // NOLINT
+#include <stdio.h>   // NOLINT
 #include <stdlib.h>  // For exit().
 
 #include "gtest/gtest.h"
 
 #if GTEST_HAS_SEH
-# include <windows.h>
+  #include <windows.h>
 #endif
 
 #if GTEST_HAS_EXCEPTIONS
-# include <exception>  // For set_terminate().
-# include <stdexcept>
+  #include <exception>  // For set_terminate().
+  #include <stdexcept>
 #endif
 
 using testing::Test;
@@ -51,47 +51,59 @@ using testing::Test;
 #if GTEST_HAS_SEH
 
 class SehExceptionInConstructorTest : public Test {
- public:
-  SehExceptionInConstructorTest() { RaiseException(42, 0, 0, NULL); }
+public:
+  SehExceptionInConstructorTest() {
+    RaiseException(42, 0, 0, NULL);
+  }
 };
 
-TEST_F(SehExceptionInConstructorTest, ThrowsExceptionInConstructor) {}
+TEST_F(SehExceptionInConstructorTest, ThrowsExceptionInConstructor) { }
 
 class SehExceptionInDestructorTest : public Test {
- public:
-  ~SehExceptionInDestructorTest() { RaiseException(42, 0, 0, NULL); }
+public:
+  ~SehExceptionInDestructorTest() {
+    RaiseException(42, 0, 0, NULL);
+  }
 };
 
-TEST_F(SehExceptionInDestructorTest, ThrowsExceptionInDestructor) {}
+TEST_F(SehExceptionInDestructorTest, ThrowsExceptionInDestructor) { }
 
 class SehExceptionInSetUpTestSuiteTest : public Test {
- public:
-  static void SetUpTestSuite() { RaiseException(42, 0, 0, NULL); }
+public:
+  static void SetUpTestSuite() {
+    RaiseException(42, 0, 0, NULL);
+  }
 };
 
-TEST_F(SehExceptionInSetUpTestSuiteTest, ThrowsExceptionInSetUpTestSuite) {}
+TEST_F(SehExceptionInSetUpTestSuiteTest, ThrowsExceptionInSetUpTestSuite) { }
 
 class SehExceptionInTearDownTestSuiteTest : public Test {
- public:
-  static void TearDownTestSuite() { RaiseException(42, 0, 0, NULL); }
+public:
+  static void TearDownTestSuite() {
+    RaiseException(42, 0, 0, NULL);
+  }
 };
 
-TEST_F(SehExceptionInTearDownTestSuiteTest,
-       ThrowsExceptionInTearDownTestSuite) {}
+TEST_F(
+  SehExceptionInTearDownTestSuiteTest, ThrowsExceptionInTearDownTestSuite) { }
 
 class SehExceptionInSetUpTest : public Test {
- protected:
-  virtual void SetUp() { RaiseException(42, 0, 0, NULL); }
+protected:
+  virtual void SetUp() {
+    RaiseException(42, 0, 0, NULL);
+  }
 };
 
-TEST_F(SehExceptionInSetUpTest, ThrowsExceptionInSetUp) {}
+TEST_F(SehExceptionInSetUpTest, ThrowsExceptionInSetUp) { }
 
 class SehExceptionInTearDownTest : public Test {
- protected:
-  virtual void TearDown() { RaiseException(42, 0, 0, NULL); }
+protected:
+  virtual void TearDown() {
+    RaiseException(42, 0, 0, NULL);
+  }
 };
 
-TEST_F(SehExceptionInTearDownTest, ThrowsExceptionInTearDown) {}
+TEST_F(SehExceptionInTearDownTest, ThrowsExceptionInTearDown) { }
 
 TEST(SehExceptionTest, ThrowsSehException) {
   RaiseException(42, 0, 0, NULL);
@@ -102,21 +114,21 @@ TEST(SehExceptionTest, ThrowsSehException) {
 #if GTEST_HAS_EXCEPTIONS
 
 class CxxExceptionInConstructorTest : public Test {
- public:
+public:
   CxxExceptionInConstructorTest() {
     // Without this macro VC++ complains about unreachable code at the end of
     // the constructor.
     GTEST_SUPPRESS_UNREACHABLE_CODE_WARNING_BELOW_(
-        throw std::runtime_error("Standard C++ exception"));
+      throw std::runtime_error("Standard C++ exception"));
   }
 
   static void TearDownTestSuite() {
     printf("%s",
-           "CxxExceptionInConstructorTest::TearDownTestSuite() "
-           "called as expected.\n");
+      "CxxExceptionInConstructorTest::TearDownTestSuite() "
+      "called as expected.\n");
   }
 
- protected:
+protected:
   ~CxxExceptionInConstructorTest() override {
     ADD_FAILURE() << "CxxExceptionInConstructorTest destructor "
                   << "called unexpectedly.";
@@ -139,11 +151,11 @@ TEST_F(CxxExceptionInConstructorTest, ThrowsExceptionInConstructor) {
 }
 
 class CxxExceptionInSetUpTestSuiteTest : public Test {
- public:
+public:
   CxxExceptionInSetUpTestSuiteTest() {
     printf("%s",
-           "CxxExceptionInSetUpTestSuiteTest constructor "
-           "called as expected.\n");
+      "CxxExceptionInSetUpTestSuiteTest constructor "
+      "called as expected.\n");
   }
 
   static void SetUpTestSuite() {
@@ -152,67 +164,69 @@ class CxxExceptionInSetUpTestSuiteTest : public Test {
 
   static void TearDownTestSuite() {
     printf("%s",
-           "CxxExceptionInSetUpTestSuiteTest::TearDownTestSuite() "
-           "called as expected.\n");
+      "CxxExceptionInSetUpTestSuiteTest::TearDownTestSuite() "
+      "called as expected.\n");
   }
 
- protected:
+protected:
   ~CxxExceptionInSetUpTestSuiteTest() override {
     printf("%s",
-           "CxxExceptionInSetUpTestSuiteTest destructor "
-           "called as expected.\n");
+      "CxxExceptionInSetUpTestSuiteTest destructor "
+      "called as expected.\n");
   }
 
   void SetUp() override {
     printf("%s",
-           "CxxExceptionInSetUpTestSuiteTest::SetUp() "
-           "called as expected.\n");
+      "CxxExceptionInSetUpTestSuiteTest::SetUp() "
+      "called as expected.\n");
   }
 
   void TearDown() override {
     printf("%s",
-           "CxxExceptionInSetUpTestSuiteTest::TearDown() "
-           "called as expected.\n");
+      "CxxExceptionInSetUpTestSuiteTest::TearDown() "
+      "called as expected.\n");
   }
 };
 
 TEST_F(CxxExceptionInSetUpTestSuiteTest, ThrowsExceptionInSetUpTestSuite) {
   printf("%s",
-         "CxxExceptionInSetUpTestSuiteTest test body "
-         "called as expected.\n");
+    "CxxExceptionInSetUpTestSuiteTest test body "
+    "called as expected.\n");
 }
 
 class CxxExceptionInTearDownTestSuiteTest : public Test {
- public:
+public:
   static void TearDownTestSuite() {
     throw std::runtime_error("Standard C++ exception");
   }
 };
 
-TEST_F(CxxExceptionInTearDownTestSuiteTest,
-       ThrowsExceptionInTearDownTestSuite) {}
+TEST_F(
+  CxxExceptionInTearDownTestSuiteTest, ThrowsExceptionInTearDownTestSuite) { }
 
 class CxxExceptionInSetUpTest : public Test {
- public:
+public:
   static void TearDownTestSuite() {
     printf("%s",
-           "CxxExceptionInSetUpTest::TearDownTestSuite() "
-           "called as expected.\n");
+      "CxxExceptionInSetUpTest::TearDownTestSuite() "
+      "called as expected.\n");
   }
 
- protected:
+protected:
   ~CxxExceptionInSetUpTest() override {
     printf("%s",
-           "CxxExceptionInSetUpTest destructor "
-           "called as expected.\n");
+      "CxxExceptionInSetUpTest destructor "
+      "called as expected.\n");
   }
 
-  void SetUp() override { throw std::runtime_error("Standard C++ exception"); }
+  void SetUp() override {
+    throw std::runtime_error("Standard C++ exception");
+  }
 
   void TearDown() override {
     printf("%s",
-           "CxxExceptionInSetUpTest::TearDown() "
-           "called as expected.\n");
+      "CxxExceptionInSetUpTest::TearDown() "
+      "called as expected.\n");
   }
 };
 
@@ -222,18 +236,18 @@ TEST_F(CxxExceptionInSetUpTest, ThrowsExceptionInSetUp) {
 }
 
 class CxxExceptionInTearDownTest : public Test {
- public:
+public:
   static void TearDownTestSuite() {
     printf("%s",
-           "CxxExceptionInTearDownTest::TearDownTestSuite() "
-           "called as expected.\n");
+      "CxxExceptionInTearDownTest::TearDownTestSuite() "
+      "called as expected.\n");
   }
 
- protected:
+protected:
   ~CxxExceptionInTearDownTest() override {
     printf("%s",
-           "CxxExceptionInTearDownTest destructor "
-           "called as expected.\n");
+      "CxxExceptionInTearDownTest destructor "
+      "called as expected.\n");
   }
 
   void TearDown() override {
@@ -241,27 +255,27 @@ class CxxExceptionInTearDownTest : public Test {
   }
 };
 
-TEST_F(CxxExceptionInTearDownTest, ThrowsExceptionInTearDown) {}
+TEST_F(CxxExceptionInTearDownTest, ThrowsExceptionInTearDown) { }
 
 class CxxExceptionInTestBodyTest : public Test {
- public:
+public:
   static void TearDownTestSuite() {
     printf("%s",
-           "CxxExceptionInTestBodyTest::TearDownTestSuite() "
-           "called as expected.\n");
+      "CxxExceptionInTestBodyTest::TearDownTestSuite() "
+      "called as expected.\n");
   }
 
- protected:
+protected:
   ~CxxExceptionInTestBodyTest() override {
     printf("%s",
-           "CxxExceptionInTestBodyTest destructor "
-           "called as expected.\n");
+      "CxxExceptionInTestBodyTest destructor "
+      "called as expected.\n");
   }
 
   void TearDown() override {
     printf("%s",
-           "CxxExceptionInTestBodyTest::TearDown() "
-           "called as expected.\n");
+      "CxxExceptionInTestBodyTest::TearDown() "
+      "called as expected.\n");
   }
 };
 

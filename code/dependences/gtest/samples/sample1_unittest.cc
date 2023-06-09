@@ -34,7 +34,6 @@
 //
 // Writing a unit test using Google C++ testing framework is easy as 1-2-3:
 
-
 // Step 1. Include necessary header files such that the stuff your
 // test logic needs is declared.
 //
@@ -43,6 +42,7 @@
 #include <limits.h>
 #include "sample1.h"
 #include "gtest/gtest.h"
+
 namespace {
 
 // Step 2. Use the TEST macro to define your tests.
@@ -68,7 +68,6 @@ namespace {
 // that their results don't depend on their order.
 //
 // </TechnicalDetails>
-
 
 // Tests Factorial().
 
@@ -108,7 +107,6 @@ TEST(FactorialTest, Positive) {
   EXPECT_EQ(6, Factorial(3));
   EXPECT_EQ(40320, Factorial(8));
 }
-
 
 // Tests IsPrime()
 

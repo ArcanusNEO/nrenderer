@@ -26,7 +26,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 // This sample shows how to use Google Test listener API to implement
 // a primitive leak checker.
 
@@ -45,7 +44,7 @@ using ::testing::UnitTest;
 namespace {
 // We will track memory used by this class.
 class Water {
- public:
+public:
   // Normal Water declarations go here.
 
   // operator new and operator delete help us control water allocation.
@@ -59,9 +58,11 @@ class Water {
     free(block);
   }
 
-  static int allocated() { return allocated_; }
+  static int allocated() {
+    return allocated_;
+  }
 
- private:
+private:
   static int allocated_;
 };
 
@@ -72,7 +73,7 @@ int Water::allocated_ = 0;
 // objects. It does this by comparing the number of live Water objects at
 // the beginning of a test and at the end of a test.
 class LeakChecker : public EmptyTestEventListener {
- private:
+private:
   // Called before a test starts.
   void OnTestStart(const TestInfo& /* test_info */) override {
     initially_allocated_ = Water::allocated();
@@ -104,15 +105,16 @@ TEST(ListenersTest, LeaksWater) {
 }
 }  // namespace
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   InitGoogleTest(&argc, argv);
 
   bool check_for_leaks = false;
-  if (argc > 1 && strcmp(argv[1], "--check_for_leaks") == 0 )
+  if (argc > 1 && strcmp(argv[1], "--check_for_leaks") == 0)
     check_for_leaks = true;
   else
-    printf("%s\n", "Run this program with --check_for_leaks to enable "
-           "custom leak checking in the tests.");
+    printf("%s\n",
+      "Run this program with --check_for_leaks to enable "
+      "custom leak checking in the tests.");
 
   // If we are given the --check_for_leaks command line flag, installs the
   // leak checker.

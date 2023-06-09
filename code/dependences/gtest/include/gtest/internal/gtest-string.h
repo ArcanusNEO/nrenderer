@@ -42,8 +42,8 @@
 #define GTEST_INCLUDE_GTEST_INTERNAL_GTEST_STRING_H_
 
 #ifdef __BORLANDC__
-// string.h is not guaranteed to provide strcpy on C++ Builder.
-# include <mem.h>
+  // string.h is not guaranteed to provide strcpy on C++ Builder.
+  #include <mem.h>
 #endif
 
 #include <string.h>
@@ -56,7 +56,7 @@ namespace internal {
 
 // String - an abstract class holding static string utilities.
 class GTEST_API_ String {
- public:
+public:
   // Static utility methods
 
   // Clones a 0-terminated C string, allocating memory using new.  The
@@ -122,8 +122,7 @@ class GTEST_API_ String {
   // Unlike strcasecmp(), this function can handle NULL argument(s).
   // A NULL C string is considered different to any non-NULL C string,
   // including the empty string.
-  static bool CaseInsensitiveCStringEquals(const char* lhs,
-                                           const char* rhs);
+  static bool CaseInsensitiveCStringEquals(const char* lhs, const char* rhs);
 
   // Compares two wide C strings, ignoring case.  Returns true if and only if
   // they have the same content.
@@ -137,13 +136,13 @@ class GTEST_API_ String {
   // which compares according to LC_CTYPE category of the current locale.
   // On MacOS X, it uses towlower, which also uses LC_CTYPE category of the
   // current locale.
-  static bool CaseInsensitiveWideCStringEquals(const wchar_t* lhs,
-                                               const wchar_t* rhs);
+  static bool CaseInsensitiveWideCStringEquals(
+    const wchar_t* lhs, const wchar_t* rhs);
 
   // Returns true if and only if the given string ends with the given suffix,
   // ignoring case. Any string is considered to end with an empty suffix.
   static bool EndsWithCaseInsensitive(
-      const std::string& str, const std::string& suffix);
+    const std::string& str, const std::string& suffix);
 
   // Formats an int value as "%02d".
   static std::string FormatIntWidth2(int value);  // "%02d" for width == 2
@@ -157,9 +156,9 @@ class GTEST_API_ String {
   // Formats a byte as "%02X".
   static std::string FormatByte(unsigned char value);
 
- private:
+private:
   String();  // Not meant to be instantiated.
-};  // class String
+};           // class String
 
 // Gets the content of the stringstream's buffer as an std::string.  Each '\0'
 // character in the buffer is replaced with "\\0".

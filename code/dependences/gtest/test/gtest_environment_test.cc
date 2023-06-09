@@ -41,14 +41,14 @@ GTEST_DECLARE_string_(filter);
 
 namespace {
 
-enum FailureType {
-  NO_FAILURE, NON_FATAL_FAILURE, FATAL_FAILURE
-};
+enum FailureType { NO_FAILURE, NON_FATAL_FAILURE, FATAL_FAILURE };
 
 // For testing using global test environments.
 class MyEnvironment : public testing::Environment {
- public:
-  MyEnvironment() { Reset(); }
+public:
+  MyEnvironment() {
+    Reset();
+  }
 
   // Depending on the value of failure_in_set_up_, SetUp() will
   // generate a non-fatal failure, generate a fatal failure, or
@@ -57,14 +57,13 @@ class MyEnvironment : public testing::Environment {
     set_up_was_run_ = true;
 
     switch (failure_in_set_up_) {
-      case NON_FATAL_FAILURE:
+      case NON_FATAL_FAILURE :
         ADD_FAILURE() << "Expected non-fatal failure in global set-up.";
         break;
-      case FATAL_FAILURE:
+      case FATAL_FAILURE :
         FAIL() << "Expected fatal failure in global set-up.";
         break;
-      default:
-        break;
+      default : break;
     }
   }
 
@@ -88,12 +87,16 @@ class MyEnvironment : public testing::Environment {
   }
 
   // Was SetUp() run?
-  bool set_up_was_run() const { return set_up_was_run_; }
+  bool set_up_was_run() const {
+    return set_up_was_run_;
+  }
 
   // Was TearDown() run?
-  bool tear_down_was_run() const { return tear_down_was_run_; }
+  bool tear_down_was_run() const {
+    return tear_down_was_run_;
+  }
 
- private:
+private:
   FailureType failure_in_set_up_;
   bool set_up_was_run_;
   bool tear_down_was_run_;
@@ -130,58 +133,58 @@ int RunAllTests(MyEnvironment* env, FailureType failure) {
 
 }  // namespace
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
 
   // Registers a global test environment, and verifies that the
   // registration function returns its argument.
   MyEnvironment* const env = new MyEnvironment;
   Check(testing::AddGlobalTestEnvironment(env) == env,
-        "AddGlobalTestEnvironment() should return its argument.");
+    "AddGlobalTestEnvironment() should return its argument.");
 
   // Verifies that RUN_ALL_TESTS() runs the tests when the global
   // set-up is successful.
   Check(RunAllTests(env, NO_FAILURE) != 0,
-        "RUN_ALL_TESTS() should return non-zero, as the global tear-down "
-        "should generate a failure.");
+    "RUN_ALL_TESTS() should return non-zero, as the global tear-down "
+    "should generate a failure.");
   Check(test_was_run,
-        "The tests should run, as the global set-up should generate no "
-        "failure");
+    "The tests should run, as the global set-up should generate no "
+    "failure");
   Check(env->tear_down_was_run(),
-        "The global tear-down should run, as the global set-up was run.");
+    "The global tear-down should run, as the global set-up was run.");
 
   // Verifies that RUN_ALL_TESTS() runs the tests when the global
   // set-up generates no fatal failure.
   Check(RunAllTests(env, NON_FATAL_FAILURE) != 0,
-        "RUN_ALL_TESTS() should return non-zero, as both the global set-up "
-        "and the global tear-down should generate a non-fatal failure.");
+    "RUN_ALL_TESTS() should return non-zero, as both the global set-up "
+    "and the global tear-down should generate a non-fatal failure.");
   Check(test_was_run,
-        "The tests should run, as the global set-up should generate no "
-        "fatal failure.");
+    "The tests should run, as the global set-up should generate no "
+    "fatal failure.");
   Check(env->tear_down_was_run(),
-        "The global tear-down should run, as the global set-up was run.");
+    "The global tear-down should run, as the global set-up was run.");
 
   // Verifies that RUN_ALL_TESTS() runs no test when the global set-up
   // generates a fatal failure.
   Check(RunAllTests(env, FATAL_FAILURE) != 0,
-        "RUN_ALL_TESTS() should return non-zero, as the global set-up "
-        "should generate a fatal failure.");
+    "RUN_ALL_TESTS() should return non-zero, as the global set-up "
+    "should generate a fatal failure.");
   Check(!test_was_run,
-        "The tests should not run, as the global set-up should generate "
-        "a fatal failure.");
+    "The tests should not run, as the global set-up should generate "
+    "a fatal failure.");
   Check(env->tear_down_was_run(),
-        "The global tear-down should run, as the global set-up was run.");
+    "The global tear-down should run, as the global set-up was run.");
 
   // Verifies that RUN_ALL_TESTS() doesn't do global set-up or
   // tear-down when there is no test to run.
   testing::GTEST_FLAG(filter) = "-*";
   Check(RunAllTests(env, NO_FAILURE) == 0,
-        "RUN_ALL_TESTS() should return zero, as there is no test to run.");
+    "RUN_ALL_TESTS() should return zero, as there is no test to run.");
   Check(!env->set_up_was_run(),
-        "The global set-up should not run, as there is no test to run.");
+    "The global set-up should not run, as there is no test to run.");
   Check(!env->tear_down_was_run(),
-        "The global tear-down should not run, "
-        "as the global set-up was not run.");
+    "The global tear-down should not run, "
+    "as the global set-up was not run.");
 
   printf("PASS\n");
   return 0;

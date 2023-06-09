@@ -27,7 +27,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 #include "test/gtest-typed-test_test.h"
 
 #include <set>
@@ -49,7 +48,8 @@ template <typename T>
 class CommonTest : public Test {
   // For some technical reason, SetUpTestSuite() and TearDownTestSuite()
   // must be public.
- public:
+
+public:
   static void SetUpTestSuite() {
     shared_ = new T(5);
   }
@@ -61,15 +61,18 @@ class CommonTest : public Test {
 
   // This 'protected:' is optional.  There's no harm in making all
   // members of this fixture class template public.
- protected:
+
+protected:
   // We used to use std::list here, but switched to std::vector since
   // MSVC's <list> doesn't compile cleanly with /W4.
   typedef std::vector<T> Vector;
   typedef std::set<int> IntSet;
 
-  CommonTest() : value_(1) {}
+  CommonTest() : value_(1) { }
 
-  ~CommonTest() override { EXPECT_EQ(3, value_); }
+  ~CommonTest() override {
+    EXPECT_EQ(3, value_);
+  }
 
   void SetUp() override {
     EXPECT_EQ(1, value_);
@@ -133,17 +136,16 @@ TYPED_TEST(CommonTest, ValuesAreStillCorrect) {
 // translation unit.
 
 template <typename T>
-class TypedTest1 : public Test {
-};
+class TypedTest1 : public Test { };
 
 // Verifies that the second argument of TYPED_TEST_SUITE can be a
 // single type.
 TYPED_TEST_SUITE(TypedTest1, int);
-TYPED_TEST(TypedTest1, A) {}
+
+TYPED_TEST(TypedTest1, A) { }
 
 template <typename T>
-class TypedTest2 : public Test {
-};
+class TypedTest2 : public Test { };
 
 // Verifies that the second argument of TYPED_TEST_SUITE can be a
 // Types<...> type list.
@@ -151,15 +153,14 @@ TYPED_TEST_SUITE(TypedTest2, Types<int>);
 
 // This also verifies that tests from different typed test cases can
 // share the same name.
-TYPED_TEST(TypedTest2, A) {}
+TYPED_TEST(TypedTest2, A) { }
 
 // Tests that a typed test case can be defined in a namespace.
 
 namespace library1 {
 
 template <typename T>
-class NumericTest : public Test {
-};
+class NumericTest : public Test { };
 
 typedef Types<int, long> NumericTypes;
 TYPED_TEST_SUITE(NumericTest, NumericTypes);
@@ -172,10 +173,10 @@ TYPED_TEST(NumericTest, DefaultIsZero) {
 
 // Tests that custom names work.
 template <typename T>
-class TypedTestWithNames : public Test {};
+class TypedTestWithNames : public Test { };
 
 class TypedTestNames {
- public:
+public:
   template <typename T>
   static std::string GetName(int i) {
     if (std::is_same<T, char>::value) {
@@ -191,16 +192,14 @@ TYPED_TEST_SUITE(TypedTestWithNames, TwoTypes, TypedTestNames);
 
 TYPED_TEST(TypedTestWithNames, TestSuiteName) {
   if (std::is_same<TypeParam, char>::value) {
-    EXPECT_STREQ(::testing::UnitTest::GetInstance()
-                     ->current_test_info()
-                     ->test_case_name(),
-                 "TypedTestWithNames/char0");
+    EXPECT_STREQ(
+      ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name(),
+      "TypedTestWithNames/char0");
   }
   if (std::is_same<TypeParam, int>::value) {
-    EXPECT_STREQ(::testing::UnitTest::GetInstance()
-                     ->current_test_info()
-                     ->test_case_name(),
-                 "TypedTestWithNames/int1");
+    EXPECT_STREQ(
+      ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name(),
+      "TypedTestWithNames/int1");
   }
 }
 
@@ -215,7 +214,7 @@ using testing::internal::TypedTestSuitePState;
 // Tests TypedTestSuitePState.
 
 class TypedTestSuitePStateTest : public Test {
- protected:
+protected:
   void SetUp() override {
     state_.AddTestName("foo.cc", 0, "FooTest", "A");
     state_.AddTestName("foo.cc", 0, "FooTest", "B");
@@ -227,54 +226,50 @@ class TypedTestSuitePStateTest : public Test {
 
 TEST_F(TypedTestSuitePStateTest, SucceedsForMatchingList) {
   const char* tests = "A, B, C";
-  EXPECT_EQ(tests,
-            state_.VerifyRegisteredTestNames("foo.cc", 1, tests));
+  EXPECT_EQ(tests, state_.VerifyRegisteredTestNames("foo.cc", 1, tests));
 }
 
 // Makes sure that the order of the tests and spaces around the names
 // don't matter.
 TEST_F(TypedTestSuitePStateTest, IgnoresOrderAndSpaces) {
   const char* tests = "A,C,   B";
-  EXPECT_EQ(tests,
-            state_.VerifyRegisteredTestNames("foo.cc", 1, tests));
+  EXPECT_EQ(tests, state_.VerifyRegisteredTestNames("foo.cc", 1, tests));
 }
 
 using TypedTestSuitePStateDeathTest = TypedTestSuitePStateTest;
 
 TEST_F(TypedTestSuitePStateDeathTest, DetectsDuplicates) {
   EXPECT_DEATH_IF_SUPPORTED(
-      state_.VerifyRegisteredTestNames("foo.cc", 1, "A, B, A, C"),
-      "foo\\.cc.1.?: Test A is listed more than once\\.");
+    state_.VerifyRegisteredTestNames("foo.cc", 1, "A, B, A, C"),
+    "foo\\.cc.1.?: Test A is listed more than once\\.");
 }
 
 TEST_F(TypedTestSuitePStateDeathTest, DetectsExtraTest) {
   EXPECT_DEATH_IF_SUPPORTED(
-      state_.VerifyRegisteredTestNames("foo.cc", 1, "A, B, C, D"),
-      "foo\\.cc.1.?: No test named D can be found in this test suite\\.");
+    state_.VerifyRegisteredTestNames("foo.cc", 1, "A, B, C, D"),
+    "foo\\.cc.1.?: No test named D can be found in this test suite\\.");
 }
 
 TEST_F(TypedTestSuitePStateDeathTest, DetectsMissedTest) {
   EXPECT_DEATH_IF_SUPPORTED(
-      state_.VerifyRegisteredTestNames("foo.cc", 1, "A, C"),
-      "foo\\.cc.1.?: You forgot to list test B\\.");
+    state_.VerifyRegisteredTestNames("foo.cc", 1, "A, C"),
+    "foo\\.cc.1.?: You forgot to list test B\\.");
 }
 
 // Tests that defining a test for a parameterized test case generates
 // a run-time error if the test case has been registered.
 TEST_F(TypedTestSuitePStateDeathTest, DetectsTestAfterRegistration) {
   state_.VerifyRegisteredTestNames("foo.cc", 1, "A, B, C");
-  EXPECT_DEATH_IF_SUPPORTED(
-      state_.AddTestName("foo.cc", 2, "FooTest", "D"),
-      "foo\\.cc.2.?: Test D must be defined before REGISTER_TYPED_TEST_SUITE_P"
-      "\\(FooTest, \\.\\.\\.\\)\\.");
+  EXPECT_DEATH_IF_SUPPORTED(state_.AddTestName("foo.cc", 2, "FooTest", "D"),
+    "foo\\.cc.2.?: Test D must be defined before REGISTER_TYPED_TEST_SUITE_P"
+    "\\(FooTest, \\.\\.\\.\\)\\.");
 }
 
 // Tests that SetUpTestSuite()/TearDownTestSuite(), fixture ctor/dtor,
 // and SetUp()/TearDown() work correctly in type-parameterized tests.
 
 template <typename T>
-class DerivedTest : public CommonTest<T> {
-};
+class DerivedTest : public CommonTest<T> { };
 
 TYPED_TEST_SUITE_P(DerivedTest);
 
@@ -298,8 +293,8 @@ TYPED_TEST_P(DerivedTest, ValuesAreStillCorrect) {
   EXPECT_EQ(2, this->value_);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(DerivedTest,
-                           ValuesAreCorrect, ValuesAreStillCorrect);
+REGISTER_TYPED_TEST_SUITE_P(
+  DerivedTest, ValuesAreCorrect, ValuesAreStillCorrect);
 
 typedef Types<short, long> MyTwoTypes;
 INSTANTIATE_TYPED_TEST_SUITE_P(My, DerivedTest, MyTwoTypes);
@@ -307,29 +302,27 @@ INSTANTIATE_TYPED_TEST_SUITE_P(My, DerivedTest, MyTwoTypes);
 // Tests that custom names work with type parametrized tests. We reuse the
 // TwoTypes from above here.
 template <typename T>
-class TypeParametrizedTestWithNames : public Test {};
+class TypeParametrizedTestWithNames : public Test { };
 
 TYPED_TEST_SUITE_P(TypeParametrizedTestWithNames);
 
 TYPED_TEST_P(TypeParametrizedTestWithNames, TestSuiteName) {
   if (std::is_same<TypeParam, char>::value) {
-    EXPECT_STREQ(::testing::UnitTest::GetInstance()
-                     ->current_test_info()
-                     ->test_case_name(),
-                 "CustomName/TypeParametrizedTestWithNames/parChar0");
+    EXPECT_STREQ(
+      ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name(),
+      "CustomName/TypeParametrizedTestWithNames/parChar0");
   }
   if (std::is_same<TypeParam, int>::value) {
-    EXPECT_STREQ(::testing::UnitTest::GetInstance()
-                     ->current_test_info()
-                     ->test_case_name(),
-                 "CustomName/TypeParametrizedTestWithNames/parInt1");
+    EXPECT_STREQ(
+      ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name(),
+      "CustomName/TypeParametrizedTestWithNames/parInt1");
   }
 }
 
 REGISTER_TYPED_TEST_SUITE_P(TypeParametrizedTestWithNames, TestSuiteName);
 
 class TypeParametrizedTestNames {
- public:
+public:
   template <typename T>
   static std::string GetName(int i) {
     if (std::is_same<T, char>::value) {
@@ -342,14 +335,13 @@ class TypeParametrizedTestNames {
 };
 
 INSTANTIATE_TYPED_TEST_SUITE_P(CustomName, TypeParametrizedTestWithNames,
-                              TwoTypes, TypeParametrizedTestNames);
+  TwoTypes, TypeParametrizedTestNames);
 
 // Tests that multiple TYPED_TEST_SUITE_P's can be defined in the same
 // translation unit.
 
 template <typename T>
-class TypedTestP1 : public Test {
-};
+class TypedTestP1 : public Test { };
 
 TYPED_TEST_SUITE_P(TypedTestP1);
 
@@ -357,8 +349,9 @@ TYPED_TEST_SUITE_P(TypedTestP1);
 // TYPED_TEST_P() is not enclosed in a namespace.
 using IntAfterTypedTestSuiteP = int;
 
-TYPED_TEST_P(TypedTestP1, A) {}
-TYPED_TEST_P(TypedTestP1, B) {}
+TYPED_TEST_P(TypedTestP1, A) { }
+
+TYPED_TEST_P(TypedTestP1, B) { }
 
 // For testing that the code between TYPED_TEST_P() and
 // REGISTER_TYPED_TEST_SUITE_P() is not enclosed in a namespace.
@@ -367,14 +360,13 @@ using IntBeforeRegisterTypedTestSuiteP = int;
 REGISTER_TYPED_TEST_SUITE_P(TypedTestP1, A, B);
 
 template <typename T>
-class TypedTestP2 : public Test {
-};
+class TypedTestP2 : public Test { };
 
 TYPED_TEST_SUITE_P(TypedTestP2);
 
 // This also verifies that tests from different type-parameterized
 // test cases can share the same name.
-TYPED_TEST_P(TypedTestP2, A) {}
+TYPED_TEST_P(TypedTestP2, A) { }
 
 REGISTER_TYPED_TEST_SUITE_P(TypedTestP2, A);
 
@@ -404,8 +396,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(My, ContainerTest, MyContainers);
 namespace library2 {
 
 template <typename T>
-class NumericTest : public Test {
-};
+class NumericTest : public Test { };
 
 TYPED_TEST_SUITE_P(NumericTest);
 
@@ -417,26 +408,46 @@ TYPED_TEST_P(NumericTest, ZeroIsLessThanOne) {
   EXPECT_LT(TypeParam(0), TypeParam(1));
 }
 
-REGISTER_TYPED_TEST_SUITE_P(NumericTest,
-                           DefaultIsZero, ZeroIsLessThanOne);
+REGISTER_TYPED_TEST_SUITE_P(NumericTest, DefaultIsZero, ZeroIsLessThanOne);
 typedef Types<int, double> NumericTypes;
 INSTANTIATE_TYPED_TEST_SUITE_P(My, NumericTest, NumericTypes);
 
 static const char* GetTestName() {
   return testing::UnitTest::GetInstance()->current_test_info()->name();
 }
+
 // Test the stripping of space from test names
-template <typename T> class TrimmedTest : public Test { };
+template <typename T>
+class TrimmedTest : public Test { };
+
 TYPED_TEST_SUITE_P(TrimmedTest);
-TYPED_TEST_P(TrimmedTest, Test1) { EXPECT_STREQ("Test1", GetTestName()); }
-TYPED_TEST_P(TrimmedTest, Test2) { EXPECT_STREQ("Test2", GetTestName()); }
-TYPED_TEST_P(TrimmedTest, Test3) { EXPECT_STREQ("Test3", GetTestName()); }
-TYPED_TEST_P(TrimmedTest, Test4) { EXPECT_STREQ("Test4", GetTestName()); }
-TYPED_TEST_P(TrimmedTest, Test5) { EXPECT_STREQ("Test5", GetTestName()); }
+
+TYPED_TEST_P(TrimmedTest, Test1) {
+  EXPECT_STREQ("Test1", GetTestName());
+}
+
+TYPED_TEST_P(TrimmedTest, Test2) {
+  EXPECT_STREQ("Test2", GetTestName());
+}
+
+TYPED_TEST_P(TrimmedTest, Test3) {
+  EXPECT_STREQ("Test3", GetTestName());
+}
+
+TYPED_TEST_P(TrimmedTest, Test4) {
+  EXPECT_STREQ("Test4", GetTestName());
+}
+
+TYPED_TEST_P(TrimmedTest, Test5) {
+  EXPECT_STREQ("Test5", GetTestName());
+}
+
 REGISTER_TYPED_TEST_SUITE_P(
-    TrimmedTest,
-    Test1, Test2,Test3 , Test4 ,Test5 );  // NOLINT
-template <typename T1, typename T2> struct MyPair {};
+  TrimmedTest, Test1, Test2, Test3, Test4, Test5);  // NOLINT
+
+template <typename T1, typename T2>
+struct MyPair { };
+
 // Be sure to try a type with a comma in its name just in case it matters.
 typedef Types<int, double, MyPair<int, int> > TrimTypes;
 INSTANTIATE_TYPED_TEST_SUITE_P(My, TrimmedTest, TrimTypes);
@@ -453,10 +464,10 @@ INSTANTIATE_TYPED_TEST_SUITE_P(My, TrimmedTest, TrimTypes);
 // that library at all and consequently complain about missing entry
 // point defined in that library (fatal error LNK1561: entry point
 // must be defined). This dummy test keeps gtest_main linked in.
-TEST(DummyTest, TypedTestsAreNotSupportedOnThisPlatform) {}
+TEST(DummyTest, TypedTestsAreNotSupportedOnThisPlatform) { }
 
-#if _MSC_VER
+  #if _MSC_VER
 GTEST_DISABLE_MSC_WARNINGS_POP_()  //  4127
-#endif                             //  _MSC_VER
+  #endif                           //  _MSC_VER
 
 #endif  // #if !defined(GTEST_HAS_TYPED_TEST) && !defined(GTEST_HAS_TYPED_TEST_P)

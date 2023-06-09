@@ -27,7 +27,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 #include "gtest/gtest-typed-test.h"
 
 #include "gtest/gtest.h"
@@ -40,8 +39,7 @@ namespace internal {
 // Skips to the first non-space char in str. Returns an empty string if str
 // contains only whitespace characters.
 static const char* SkipSpaces(const char* str) {
-  while (IsSpace(*str))
-    str++;
+  while (IsSpace(*str)) str++;
   return str;
 }
 
@@ -58,7 +56,7 @@ static std::vector<std::string> SplitIntoTestNames(const char* src) {
 // registered_tests_; returns registered_tests if successful, or
 // aborts the program otherwise.
 const char* TypedTestSuitePState::VerifyRegisteredTestNames(
-    const char* file, int line, const char* registered_tests) {
+  const char* file, int line, const char* registered_tests) {
   typedef RegisteredTestsMap::const_iterator RegisteredTestIter;
   registered_ = true;
 
@@ -77,8 +75,7 @@ const char* TypedTestSuitePState::VerifyRegisteredTestNames(
 
     bool found = false;
     for (RegisteredTestIter it = registered_tests_.begin();
-         it != registered_tests_.end();
-         ++it) {
+         it != registered_tests_.end(); ++it) {
       if (name == it->first) {
         found = true;
         break;
@@ -94,8 +91,7 @@ const char* TypedTestSuitePState::VerifyRegisteredTestNames(
   }
 
   for (RegisteredTestIter it = registered_tests_.begin();
-       it != registered_tests_.end();
-       ++it) {
+       it != registered_tests_.end(); ++it) {
     if (tests.count(it->first) == 0) {
       errors << "You forgot to list test " << it->first << ".\n";
     }
@@ -104,7 +100,7 @@ const char* TypedTestSuitePState::VerifyRegisteredTestNames(
   const std::string& errors_str = errors.GetString();
   if (errors_str != "") {
     fprintf(stderr, "%s %s", FormatFileLocation(file, line).c_str(),
-            errors_str.c_str());
+      errors_str.c_str());
     fflush(stderr);
     posix::Abort();
   }

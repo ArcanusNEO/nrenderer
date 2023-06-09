@@ -27,7 +27,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 // This sample shows how to test code relying on some global flag variables.
 // Combine() helps with generating all possible combinations of such flags,
 // and each test is given one combination as a parameter.
@@ -36,6 +35,7 @@
 #include "prime_tables.h"
 
 #include "gtest/gtest.h"
+
 namespace {
 
 // Suppose we want to introduce a new, improved implementation of PrimeTable
@@ -46,13 +46,14 @@ namespace {
 // told to instantiate without PrecalcPrimeTable instance at all and use only
 // OnTheFlyPrimeTable.
 class HybridPrimeTable : public PrimeTable {
- public:
-  HybridPrimeTable(bool force_on_the_fly, int max_precalculated)
-      : on_the_fly_impl_(new OnTheFlyPrimeTable),
-        precalc_impl_(force_on_the_fly
-                          ? nullptr
-                          : new PreCalculatedPrimeTable(max_precalculated)),
-        max_precalculated_(max_precalculated) {}
+public:
+  HybridPrimeTable(bool force_on_the_fly, int max_precalculated) :
+    on_the_fly_impl_(new OnTheFlyPrimeTable),
+    precalc_impl_(force_on_the_fly ?
+        nullptr :
+        new PreCalculatedPrimeTable(max_precalculated)),
+    max_precalculated_(max_precalculated) { }
+
   ~HybridPrimeTable() override {
     delete on_the_fly_impl_;
     delete precalc_impl_;
@@ -61,8 +62,7 @@ class HybridPrimeTable : public PrimeTable {
   bool IsPrime(int n) const override {
     if (precalc_impl_ != nullptr && n < max_precalculated_)
       return precalc_impl_->IsPrime(n);
-    else
-      return on_the_fly_impl_->IsPrime(n);
+    else return on_the_fly_impl_->IsPrime(n);
   }
 
   int GetNextPrime(int p) const override {
@@ -73,16 +73,16 @@ class HybridPrimeTable : public PrimeTable {
     return next_prime != -1 ? next_prime : on_the_fly_impl_->GetNextPrime(p);
   }
 
- private:
+private:
   OnTheFlyPrimeTable* on_the_fly_impl_;
   PreCalculatedPrimeTable* precalc_impl_;
   int max_precalculated_;
 };
 
-using ::testing::TestWithParam;
 using ::testing::Bool;
-using ::testing::Values;
 using ::testing::Combine;
+using ::testing::TestWithParam;
+using ::testing::Values;
 
 // To test all code paths for HybridPrimeTable we must test it with numbers
 // both within and outside PreCalculatedPrimeTable's capacity and also with
@@ -90,17 +90,19 @@ using ::testing::Combine;
 // accept different combinations of parameters for instantiating a
 // HybridPrimeTable instance.
 class PrimeTableTest : public TestWithParam< ::std::tuple<bool, int> > {
- protected:
+protected:
   void SetUp() override {
     bool force_on_the_fly;
     int max_precalculated;
     std::tie(force_on_the_fly, max_precalculated) = GetParam();
     table_ = new HybridPrimeTable(force_on_the_fly, max_precalculated);
   }
+
   void TearDown() override {
     delete table_;
     table_ = nullptr;
   }
+
   HybridPrimeTable* table_;
 };
 
@@ -148,7 +150,7 @@ TEST_P(PrimeTableTest, CanGetNextPrime) {
 // will put some of the tested numbers beyond the capability of the
 // PrecalcPrimeTable instance and some inside it (10). Combine will produce all
 // possible combinations.
-INSTANTIATE_TEST_SUITE_P(MeaningfulTestParameters, PrimeTableTest,
-                         Combine(Bool(), Values(1, 10)));
+INSTANTIATE_TEST_SUITE_P(
+  MeaningfulTestParameters, PrimeTableTest, Combine(Bool(), Values(1, 10)));
 
 }  // namespace

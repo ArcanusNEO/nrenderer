@@ -50,20 +50,19 @@ struct LessByName {
 };
 
 class UnitTestHelper {
- public:
+public:
   // Returns the array of pointers to all test suites sorted by the test suite
   // name.  The caller is responsible for deleting the array.
   static TestSuite const** GetSortedTestSuites() {
     UnitTest& unit_test = *UnitTest::GetInstance();
     auto const** const test_suites =
-        new const TestSuite*[unit_test.total_test_suite_count()];
+      new const TestSuite*[unit_test.total_test_suite_count()];
 
     for (int i = 0; i < unit_test.total_test_suite_count(); ++i)
       test_suites[i] = unit_test.GetTestSuite(i);
 
-    std::sort(test_suites,
-              test_suites + unit_test.total_test_suite_count(),
-              LessByName<TestSuite>());
+    std::sort(test_suites, test_suites + unit_test.total_test_suite_count(),
+      LessByName<TestSuite>());
     return test_suites;
   }
 
@@ -73,8 +72,7 @@ class UnitTestHelper {
     UnitTest& unit_test = *UnitTest::GetInstance();
     for (int i = 0; i < unit_test.total_test_suite_count(); ++i) {
       const TestSuite* test_suite = unit_test.GetTestSuite(i);
-      if (0 == strcmp(test_suite->name(), name))
-        return test_suite;
+      if (0 == strcmp(test_suite->name(), name)) return test_suite;
     }
     return nullptr;
   }
@@ -84,21 +82,24 @@ class UnitTestHelper {
   // array.
   static TestInfo const** GetSortedTests(const TestSuite* test_suite) {
     TestInfo const** const tests =
-        new const TestInfo*[test_suite->total_test_count()];
+      new const TestInfo*[test_suite->total_test_count()];
 
     for (int i = 0; i < test_suite->total_test_count(); ++i)
       tests[i] = test_suite->GetTestInfo(i);
 
-    std::sort(tests, tests + test_suite->total_test_count(),
-              LessByName<TestInfo>());
+    std::sort(
+      tests, tests + test_suite->total_test_count(), LessByName<TestInfo>());
     return tests;
   }
 };
 
 #if GTEST_HAS_TYPED_TEST
-template <typename T> class TestSuiteWithCommentTest : public Test {};
+template <typename T>
+class TestSuiteWithCommentTest : public Test { };
+
 TYPED_TEST_SUITE(TestSuiteWithCommentTest, Types<int>);
-TYPED_TEST(TestSuiteWithCommentTest, Dummy) {}
+
+TYPED_TEST(TestSuiteWithCommentTest, Dummy) { }
 
 const int kTypedTestSuites = 1;
 const int kTypedTests = 1;
@@ -227,11 +228,12 @@ TEST(ApiTest, TestSuiteDisabledAccessorsWork) {
 
 // These two tests are here to provide support for testing
 // test_suite_to_run_count, disabled_test_count, and test_to_run_count.
-TEST(ApiTest, DISABLED_Dummy1) {}
-TEST(DISABLED_Test, Dummy2) {}
+TEST(ApiTest, DISABLED_Dummy1) { }
+
+TEST(DISABLED_Test, Dummy2) { }
 
 class FinalSuccessChecker : public Environment {
- protected:
+protected:
   void TearDown() override {
     UnitTest* unit_test = UnitTest::GetInstance();
 
@@ -331,7 +333,7 @@ class FinalSuccessChecker : public Environment {
 }  // namespace internal
 }  // namespace testing
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   InitGoogleTest(&argc, argv);
 
   AddGlobalTestEnvironment(new testing::internal::FinalSuccessChecker());

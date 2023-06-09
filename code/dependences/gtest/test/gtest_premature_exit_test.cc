@@ -44,14 +44,14 @@ using ::testing::internal::posix::StatStruct;
 namespace {
 
 class PrematureExitTest : public Test {
- public:
+public:
   // Returns true if and only if the given file exists.
   static bool FileExists(const char* filepath) {
     StatStruct stat;
     return Stat(filepath, &stat) == 0;
   }
 
- protected:
+protected:
   PrematureExitTest() {
     premature_exit_file_path_ = GetEnv("TEST_PREMATURE_EXIT_FILE");
 
@@ -81,7 +81,8 @@ TEST_F(PrematureExitDeathTest, FileExistsDuringExecutionOfDeathTest) {
     return;
   }
 
-  EXPECT_DEATH_IF_SUPPORTED({
+  EXPECT_DEATH_IF_SUPPORTED(
+    {
       // If the file exists, crash the process such that the main test
       // process will catch the (expected) crash and report a success;
       // otherwise don't crash, which will cause the main test process
@@ -89,7 +90,8 @@ TEST_F(PrematureExitDeathTest, FileExistsDuringExecutionOfDeathTest) {
       if (PrematureExitFileExists()) {
         exit(1);
       }
-    }, "");
+    },
+    "");
 }
 
 // Tests that the premature-exit file exists during the execution of a
@@ -100,13 +102,13 @@ TEST_F(PrematureExitTest, PrematureExitFileExistsDuringTestExecution) {
   }
 
   EXPECT_TRUE(PrematureExitFileExists())
-      << " file " << premature_exit_file_path_
-      << " should exist during test execution, but doesn't.";
+    << " file " << premature_exit_file_path_
+    << " should exist during test execution, but doesn't.";
 }
 
 }  // namespace
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   InitGoogleTest(&argc, argv);
   const int exit_code = RUN_ALL_TESTS();
 
@@ -116,8 +118,8 @@ int main(int argc, char **argv) {
   if (filepath != nullptr && *filepath != '\0') {
     if (PrematureExitTest::FileExists(filepath)) {
       printf(
-          "File %s shouldn't exist after the test program finishes, but does.",
-          filepath);
+        "File %s shouldn't exist after the test program finishes, but does.",
+        filepath);
       return 1;
     }
   }

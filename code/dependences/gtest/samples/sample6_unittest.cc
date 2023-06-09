@@ -27,7 +27,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 // This sample shows how to test common properties of multiple
 // implementations of the same interface (aka interface tests).
 
@@ -35,6 +34,7 @@
 #include "prime_tables.h"
 
 #include "gtest/gtest.h"
+
 namespace {
 // First, we define some factory functions for creating instances of
 // the implementations.  You may be able to skip this step if all your
@@ -56,12 +56,14 @@ PrimeTable* CreatePrimeTable<PreCalculatedPrimeTable>() {
 // Then we define a test fixture class template.
 template <class T>
 class PrimeTableTest : public testing::Test {
- protected:
+protected:
   // The ctor calls the factory function to create a prime table
   // implemented by T.
-  PrimeTableTest() : table_(CreatePrimeTable<T>()) {}
+  PrimeTableTest() : table_(CreatePrimeTable<T>()) { }
 
-  ~PrimeTableTest() override { delete table_; }
+  ~PrimeTableTest() override {
+    delete table_;
+  }
 
   // Note that we test an implementation via the base interface
   // instead of the actual implementation class.  This is important
@@ -157,8 +159,7 @@ using testing::Types;
 // the PrimeTableTest fixture defined earlier:
 
 template <class T>
-class PrimeTableTest2 : public PrimeTableTest<T> {
-};
+class PrimeTableTest2 : public PrimeTableTest<T> { };
 
 // Then, declare the test case.  The argument is the name of the test
 // fixture, and also the name of the test case (as usual).  The _P
@@ -197,9 +198,9 @@ TYPED_TEST_P(PrimeTableTest2, CanGetNextPrime) {
 // Type-parameterized tests involve one extra step: you have to
 // enumerate the tests you defined:
 REGISTER_TYPED_TEST_SUITE_P(
-    PrimeTableTest2,  // The first argument is the test case name.
-    // The rest of the arguments are the test names.
-    ReturnsFalseForNonPrimes, ReturnsTrueForPrimes, CanGetNextPrime);
+  PrimeTableTest2,  // The first argument is the test case name.
+  // The rest of the arguments are the test names.
+  ReturnsFalseForNonPrimes, ReturnsTrueForPrimes, CanGetNextPrime);
 
 // At this point the test pattern is done.  However, you don't have
 // any real test yet as you haven't said which types you want to run
@@ -215,10 +216,10 @@ REGISTER_TYPED_TEST_SUITE_P(
 // The list of types we want to test.  Note that it doesn't have to be
 // defined at the time we write the TYPED_TEST_P()s.
 typedef Types<OnTheFlyPrimeTable, PreCalculatedPrimeTable>
-    PrimeTableImplementations;
-INSTANTIATE_TYPED_TEST_SUITE_P(OnTheFlyAndPreCalculated,    // Instance name
-                               PrimeTableTest2,             // Test case name
-                               PrimeTableImplementations);  // Type list
+  PrimeTableImplementations;
+INSTANTIATE_TYPED_TEST_SUITE_P(OnTheFlyAndPreCalculated,  // Instance name
+  PrimeTableTest2,                                        // Test case name
+  PrimeTableImplementations);                             // Type list
 
 #endif  // GTEST_HAS_TYPED_TEST_P
 }  // namespace

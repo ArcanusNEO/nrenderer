@@ -27,7 +27,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 // This sample shows how to test common properties of multiple
 // implementations of an interface (aka interface tests) using
 // value-parameterized tests. Each test in the test case has
@@ -38,6 +37,7 @@
 #include "prime_tables.h"
 
 #include "gtest/gtest.h"
+
 namespace {
 
 using ::testing::TestWithParam;
@@ -64,15 +64,21 @@ PrimeTable* CreatePreCalculatedPrimeTable() {
 // parameter is a factory function which we call in fixture's SetUp() to
 // create and store an instance of PrimeTable.
 class PrimeTableTestSmpl7 : public TestWithParam<CreatePrimeTableFunc*> {
- public:
-  ~PrimeTableTestSmpl7() override { delete table_; }
-  void SetUp() override { table_ = (*GetParam())(); }
+public:
+  ~PrimeTableTestSmpl7() override {
+    delete table_;
+  }
+
+  void SetUp() override {
+    table_ = (*GetParam())();
+  }
+
   void TearDown() override {
     delete table_;
     table_ = nullptr;
   }
 
- protected:
+protected:
   PrimeTable* table_;
 };
 
@@ -111,7 +117,6 @@ TEST_P(PrimeTableTestSmpl7, CanGetNextPrime) {
 // Here, we instantiate our tests with a list of two PrimeTable object
 // factory functions:
 INSTANTIATE_TEST_SUITE_P(OnTheFlyAndPreCalculated, PrimeTableTestSmpl7,
-                         Values(&CreateOnTheFlyPrimeTable,
-                                &CreatePreCalculatedPrimeTable<1000>));
+  Values(&CreateOnTheFlyPrimeTable, &CreatePreCalculatedPrimeTable<1000>));
 
 }  // namespace

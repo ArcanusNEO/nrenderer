@@ -43,7 +43,7 @@ int Counter::Increment() {
 int Counter::Decrement() {
   if (counter_ == 0) {
     return counter_;
-  } else  {
+  } else {
     return counter_--;
   }
 }

@@ -27,7 +27,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 // This sample teaches how to reuse a test fixture in multiple test
 // cases by deriving sub-fixtures from it.
 //
@@ -48,6 +47,7 @@
 #include "gtest/gtest.h"
 #include "sample1.h"
 #include "sample3-inl.h"
+
 namespace {
 // In this sample, we want to ensure that every test finishes within
 // ~5 seconds.  If a test takes longer to run, we consider it a
@@ -60,10 +60,12 @@ namespace {
 //
 // Later, we will derive multiple test fixtures from QuickTest.
 class QuickTest : public testing::Test {
- protected:
+protected:
   // Remember that SetUp() is run immediately before a test starts.
   // This is a good place to record the start time.
-  void SetUp() override { start_time_ = time(nullptr); }
+  void SetUp() override {
+    start_time_ = time(nullptr);
+  }
 
   // TearDown() is invoked immediately after a test finishes.  Here we
   // check if the test was too slow.
@@ -81,7 +83,6 @@ class QuickTest : public testing::Test {
   time_t start_time_;
 };
 
-
 // We derive a fixture named IntegerFunctionTest from the QuickTest
 // fixture.  All tests using this fixture will be automatically
 // required to be quick.
@@ -89,7 +90,6 @@ class IntegerFunctionTest : public QuickTest {
   // We don't need any more logic than already in the QuickTest fixture.
   // Therefore the body is empty.
 };
-
 
 // Now we can write tests in the IntegerFunctionTest test case.
 
@@ -109,7 +109,6 @@ TEST_F(IntegerFunctionTest, Factorial) {
   EXPECT_EQ(6, Factorial(3));
   EXPECT_EQ(40320, Factorial(8));
 }
-
 
 // Tests IsPrime()
 TEST_F(IntegerFunctionTest, IsPrime) {
@@ -131,7 +130,6 @@ TEST_F(IntegerFunctionTest, IsPrime) {
   EXPECT_TRUE(IsPrime(23));
 }
 
-
 // The next test case (named "QueueTest") also needs to be quick, so
 // we derive another fixture from QuickTest.
 //
@@ -139,7 +137,7 @@ TEST_F(IntegerFunctionTest, IsPrime) {
 // addition to what's in QuickTest already.  We define the additional
 // stuff inside the body of the test fixture, as usual.
 class QueueTest : public QuickTest {
- protected:
+protected:
   void SetUp() override {
     // First, we need to set up the super fixture (QuickTest).
     QuickTest::SetUp();
@@ -162,7 +160,6 @@ class QueueTest : public QuickTest {
   Queue<int> q1_;
   Queue<int> q2_;
 };
-
 
 // Now, let's write tests using the QueueTest fixture.
 
@@ -189,6 +186,7 @@ TEST_F(QueueTest, Dequeue) {
   delete n;
 }
 }  // namespace
+
 // If necessary, you can derive further test fixtures from a derived
 // fixture itself.  For example, you can derive another fixture from
 // QueueTest.  Google Test imposes no limit on how deep the hierarchy

@@ -42,16 +42,15 @@ namespace {
 
 // The test fixture for testing TestPartResult.
 class TestPartResultTest : public Test {
- protected:
-  TestPartResultTest()
-      : r1_(TestPartResult::kSuccess, "foo/bar.cc", 10, "Success!"),
-        r2_(TestPartResult::kNonFatalFailure, "foo/bar.cc", -1, "Failure!"),
-        r3_(TestPartResult::kFatalFailure, nullptr, -1, "Failure!"),
-        r4_(TestPartResult::kSkip, "foo/bar.cc", 2, "Skipped!") {}
+protected:
+  TestPartResultTest() :
+    r1_(TestPartResult::kSuccess, "foo/bar.cc", 10, "Success!"),
+    r2_(TestPartResult::kNonFatalFailure, "foo/bar.cc", -1, "Failure!"),
+    r3_(TestPartResult::kFatalFailure, nullptr, -1, "Failure!"),
+    r4_(TestPartResult::kSkip, "foo/bar.cc", 2, "Skipped!") { }
 
   TestPartResult r1_, r2_, r3_, r4_;
 };
-
 
 TEST_F(TestPartResultTest, ConstructorWorks) {
   Message message;
@@ -59,10 +58,8 @@ TEST_F(TestPartResultTest, ConstructorWorks) {
   message << static_cast<const char*>(testing::internal::kStackTraceMarker);
   message << "some unimportant stack trace";
 
-  const TestPartResult result(TestPartResult::kNonFatalFailure,
-                              "some_file.cc",
-                              42,
-                              message.GetString().c_str());
+  const TestPartResult result(TestPartResult::kNonFatalFailure, "some_file.cc",
+    42, message.GetString().c_str());
 
   EXPECT_EQ(TestPartResult::kNonFatalFailure, result.type());
   EXPECT_STREQ("some_file.cc", result.file_name());
@@ -72,30 +69,24 @@ TEST_F(TestPartResultTest, ConstructorWorks) {
 }
 
 TEST_F(TestPartResultTest, ResultAccessorsWork) {
-  const TestPartResult success(TestPartResult::kSuccess,
-                               "file.cc",
-                               42,
-                               "message");
+  const TestPartResult success(
+    TestPartResult::kSuccess, "file.cc", 42, "message");
   EXPECT_TRUE(success.passed());
   EXPECT_FALSE(success.failed());
   EXPECT_FALSE(success.nonfatally_failed());
   EXPECT_FALSE(success.fatally_failed());
   EXPECT_FALSE(success.skipped());
 
-  const TestPartResult nonfatal_failure(TestPartResult::kNonFatalFailure,
-                                        "file.cc",
-                                        42,
-                                        "message");
+  const TestPartResult nonfatal_failure(
+    TestPartResult::kNonFatalFailure, "file.cc", 42, "message");
   EXPECT_FALSE(nonfatal_failure.passed());
   EXPECT_TRUE(nonfatal_failure.failed());
   EXPECT_TRUE(nonfatal_failure.nonfatally_failed());
   EXPECT_FALSE(nonfatal_failure.fatally_failed());
   EXPECT_FALSE(nonfatal_failure.skipped());
 
-  const TestPartResult fatal_failure(TestPartResult::kFatalFailure,
-                                     "file.cc",
-                                     42,
-                                     "message");
+  const TestPartResult fatal_failure(
+    TestPartResult::kFatalFailure, "file.cc", 42, "message");
   EXPECT_FALSE(fatal_failure.passed());
   EXPECT_TRUE(fatal_failure.failed());
   EXPECT_FALSE(fatal_failure.nonfatally_failed());
@@ -181,10 +172,10 @@ TEST_F(TestPartResultTest, NonfatallyFailed) {
 // Tests the TestPartResultArray class.
 
 class TestPartResultArrayTest : public Test {
- protected:
-  TestPartResultArrayTest()
-      : r1_(TestPartResult::kNonFatalFailure, "foo/bar.cc", -1, "Failure 1"),
-        r2_(TestPartResult::kFatalFailure, "foo/bar.cc", -1, "Failure 2") {}
+protected:
+  TestPartResultArrayTest() :
+    r1_(TestPartResult::kNonFatalFailure, "foo/bar.cc", -1, "Failure 1"),
+    r2_(TestPartResult::kFatalFailure, "foo/bar.cc", -1, "Failure 2") { }
 
   const TestPartResult r1_, r2_;
 };

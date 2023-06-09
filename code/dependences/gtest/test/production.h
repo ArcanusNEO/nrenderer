@@ -36,7 +36,7 @@
 #include "gtest/gtest_prod.h"
 
 class PrivateCode {
- public:
+public:
   // Declares a friend test that does not use a fixture.
   FRIEND_TEST(PrivateCodeTest, CanAccessPrivateMembers);
 
@@ -45,9 +45,15 @@ class PrivateCode {
 
   PrivateCode();
 
-  int x() const { return x_; }
- private:
-  void set_x(int an_x) { x_ = an_x; }
+  int x() const {
+    return x_;
+  }
+
+private:
+  void set_x(int an_x) {
+    x_ = an_x;
+  }
+
   int x_;
 };
 

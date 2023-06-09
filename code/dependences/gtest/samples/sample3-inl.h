@@ -34,7 +34,6 @@
 
 #include <stddef.h>
 
-
 // Queue is a simple queue implemented as a singled-linked list.
 //
 // The element type must support copy constructor.
@@ -47,22 +46,29 @@ template <typename E>  // E is the element type
 class QueueNode {
   friend class Queue<E>;
 
- public:
+public:
   // Gets the element in this node.
-  const E& element() const { return element_; }
+  const E& element() const {
+    return element_;
+  }
 
   // Gets the next node in the queue.
-  QueueNode* next() { return next_; }
-  const QueueNode* next() const { return next_; }
+  QueueNode* next() {
+    return next_;
+  }
 
- private:
+  const QueueNode* next() const {
+    return next_;
+  }
+
+private:
   // Creates a node with a given element value.  The next pointer is
   // set to NULL.
-  explicit QueueNode(const E& an_element)
-      : element_(an_element), next_(nullptr) {}
+  explicit QueueNode(const E& an_element) :
+    element_(an_element), next_(nullptr) { }
 
   // We disable the default assignment operator and copy c'tor.
-  const QueueNode& operator = (const QueueNode&);
+  const QueueNode& operator=(const QueueNode&);
   QueueNode(const QueueNode&);
 
   E element_;
@@ -71,12 +77,14 @@ class QueueNode {
 
 template <typename E>  // E is the element type.
 class Queue {
- public:
+public:
   // Creates an empty queue.
-  Queue() : head_(nullptr), last_(nullptr), size_(0) {}
+  Queue() : head_(nullptr), last_(nullptr), size_(0) { }
 
   // D'tor.  Clears the queue.
-  ~Queue() { Clear(); }
+  ~Queue() {
+    Clear();
+  }
 
   // Clears the queue.
   void Clear() {
@@ -84,7 +92,7 @@ class Queue {
       // 1. Deletes every node.
       QueueNode<E>* node = head_;
       QueueNode<E>* next = node->next();
-      for (; ;) {
+      for (;;) {
         delete node;
         node = next;
         if (node == nullptr) break;
@@ -98,15 +106,27 @@ class Queue {
   }
 
   // Gets the number of elements.
-  size_t Size() const { return size_; }
+  size_t Size() const {
+    return size_;
+  }
 
   // Gets the first element of the queue, or NULL if the queue is empty.
-  QueueNode<E>* Head() { return head_; }
-  const QueueNode<E>* Head() const { return head_; }
+  QueueNode<E>* Head() {
+    return head_;
+  }
+
+  const QueueNode<E>* Head() const {
+    return head_;
+  }
 
   // Gets the last element of the queue, or NULL if the queue is empty.
-  QueueNode<E>* Last() { return last_; }
-  const QueueNode<E>* Last() const { return last_; }
+  QueueNode<E>* Last() {
+    return last_;
+  }
+
+  const QueueNode<E>* Last() const {
+    return last_;
+  }
 
   // Adds an element to the end of the queue.  A copy of the element is
   // created using the copy constructor, and then stored in the queue.
@@ -159,14 +179,14 @@ class Queue {
     return new_queue;
   }
 
- private:
+private:
   QueueNode<E>* head_;  // The first node of the queue.
   QueueNode<E>* last_;  // The last node of the queue.
-  size_t size_;  // The number of elements in the queue.
+  size_t size_;         // The number of elements in the queue.
 
   // We disallow copying a queue.
   Queue(const Queue&);
-  const Queue& operator = (const Queue&);
+  const Queue& operator=(const Queue&);
 };
 
 #endif  // GTEST_SAMPLES_SAMPLE3_INL_H_

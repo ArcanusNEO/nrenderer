@@ -1,6 +1,6 @@
 #include "server/Server.hpp"
 
 NRenderer::Server& getServer() {
-    static NRenderer::Server b{};
-    return b;
+  static NRenderer::Server b {};
+  return b;
 }
